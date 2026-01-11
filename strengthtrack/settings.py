@@ -20,8 +20,20 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "django.contrib.staticfiles",
+    "crispy_forms",
+    "crispy_bootstrap5",
+    "accounts",
+    "core",
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "home"
+LOGIN_URL = "login"
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # Для разработки
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

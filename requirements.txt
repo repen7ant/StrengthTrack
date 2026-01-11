@@ -1,2 +1,5 @@
-django
+django==6.0.1
 python-dotenv==1.0.0
+django-crispy-forms==2.5
+crispy-bootstrap==2025.6
+pillow==12.1.0

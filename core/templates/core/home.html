@@ -1,0 +1,90 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Главная - StrengthTrack{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Система планирования силовых тренировок</h1>
+                <p class="lead mb-4">
+                    StrengthTrack —  отличное решение для продвинутых атлетов, 
+                    использующих принципы RIR/RPE и периодизацию нагрузки.
+                </p>
+                {% if not user.is_authenticated %}
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="{% url 'register' %}" class="btn btn-light btn-lg px-4 me-md-2">
+                            Начать 
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a href="#" class="btn btn-light btn-lg px-4 me-md-2">
+                            Перейти к тренировкам
+                        </a>
+                        <a href="{% url 'profile' %}" class="btn btn-outline-light btn-lg px-4">
+                            Мой профиль
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Возможности</h2>
+            <p class="lead text-muted">Все, что нужно для прогресса в силовых тренировках</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h4 class="card-title">RIR/RPE планирование</h4>
+                        <p class="card-text">
+                            Автоматический расчет нагрузок на основе субъективной оценки усилия.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <h4 class="card-title">Периодизация</h4>
+                        <p class="card-text">
+                            Генерация 4-недельных мезоциклов с фазами Intro, Build, Peak и Deload.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4 class="card-title">Аналитика прогресса</h4>
+                        <p class="card-text">
+                            Визуализация изменений рабочих весов и расчетного 1ПМ.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
