@@ -2,5 +2,5 @@ from django.shortcuts import render
 
 
 def home(request):
-    """Главная страница"""
+    """Main page"""
     return render(request, "core/home.html")

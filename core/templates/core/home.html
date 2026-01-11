@@ -1,31 +1,30 @@
 {% extends 'core/base.html' %}
 {% load static %}
 
-{% block title %}Главная - StrengthTrack{% endblock %}
+{% block title %}Main - StrengthTrack{% endblock %}
 
 {% block content %}
 <section class="hero">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6">
-                <h1 class="display-4 fw-bold mb-4">Система планирования силовых тренировок</h1>
+                <h1 class="display-4 fw-bold mb-4">Strength Training Planning System</h1>
                 <p class="lead mb-4">
-                    StrengthTrack —  отличное решение для продвинутых атлетов, 
-                    использующих принципы RIR/RPE и периодизацию нагрузки.
-                </p>
+                </pStrengthTrack is an excellent solution for advanced athletes using 
+                    the principles of RIR/RPE and load periodization.>
                 {% if not user.is_authenticated %}
                     <div class="d-grid gap-2 d-md-flex">
                         <a href="{% url 'register' %}" class="btn btn-light btn-lg px-4 me-md-2">
-                            Начать 
+                            Start 
                         </a>
                     </div>
                 {% else %}
                     <div class="d-grid gap-2 d-md-flex">
                         <a href="#" class="btn btn-light btn-lg px-4 me-md-2">
-                            Перейти к тренировкам
+                           Workouts
                         </a>
                         <a href="{% url 'profile' %}" class="btn btn-outline-light btn-lg px-4">
-                            Мой профиль
+                            Profile
                         </a>
                     </div>
                 {% endif %}
@@ -37,8 +36,8 @@
 <section class="py-5">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="display-5 fw-bold">Возможности</h2>
-            <p class="lead text-muted">Все, что нужно для прогресса в силовых тренировках</p>
+            <h2 class="display-5 fw-bold">Feautres</h2>
+            <p class="lead text-muted">Everything you need to progress in strength training</p>
         </div>
         
         <div class="row g-4">
@@ -48,9 +47,9 @@
                         <div class="feature-icon">
                             <i class="fas fa-chart-bar"></i>
                         </div>
-                        <h4 class="card-title">RIR/RPE планирование</h4>
+                        <h4 class="card-title">RIR/RPE planning</h4>
                         <p class="card-text">
-                            Автоматический расчет нагрузок на основе субъективной оценки усилия.
+                            Automatic load calculation based on a subjective assessment of effort.
                         </p>
                     </div>
                 </div>
@@ -62,9 +61,9 @@
                         <div class="feature-icon">
                             <i class="fas fa-calendar-alt"></i>
                         </div>
-                        <h4 class="card-title">Периодизация</h4>
+                        <h4 class="card-title">Periodization</h4>
                         <p class="card-text">
-                            Генерация 4-недельных мезоциклов с фазами Intro, Build, Peak и Deload.
+                            Generation of 4-week mesocycles with Intro, Build, Peak, and Deload phases.
                         </p>
                     </div>
                 </div>
@@ -76,9 +75,9 @@
                         <div class="feature-icon">
                             <i class="fas fa-chart-line"></i>
                         </div>
-                        <h4 class="card-title">Аналитика прогресса</h4>
+                        <h4 class="card-title">Progress analysis</h4>
                         <p class="card-text">
-                            Визуализация изменений рабочих весов и расчетного 1ПМ.
+                            Visualization of changes in working weights and calculated 1RM.
                         </p>
                     </div>
                 </div>

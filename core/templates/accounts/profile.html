@@ -1,12 +1,11 @@
 {% extends 'core/base.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %}Профиль - StrengthTrack{% endblock %}
+{% block title %}Profile - StrengthTrack{% endblock %}
 
 {% block content %}
 <div class="container py-5">
     <div class="row">
-        <!-- Боковая панель -->
         <div class="col-md-3">
             <div class="card mb-4">
                 <div class="card-body text-center">
@@ -17,35 +16,34 @@
                     <p class="text-muted">{{ user.email }}</p>
                     <hr>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="text-decoration-none"><i class="fas fa-dumbbell me-2"></i>Мои тренировки</a></li>
-                        <li class="mb-2"><a href="#" class="text-decoration-none"><i class="fas fa-chart-line me-2"></i>Прогресс</a></li>
-                        <li class="mb-2"><a href="#" class="text-decoration-none"><i class="fas fa-cog me-2"></i>Настройки</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none"><i class="fas fa-dumbbell me-2"></i>Workouts</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none"><i class="fas fa-chart-line me-2"></i>Proress</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none"><i class="fas fa-cog me-2"></i>Settings</a></li>
                     </ul>
                 </div>
             </div>
         </div>
         
-        <!-- Основной контент -->
         <div class="col-md-9">
             <div class="card">
                 <div class="card-header">
-                    <h4 class="mb-0">Редактирование профиля</h4>
+                    <h4 class="mb-0">Edit profile</h4>
                 </div>
                 <div class="card-body">
                     <form method="POST">
                         {% csrf_token %}
                         {{ user_form|crispy }}
-                        <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
                     </form>
                     
                     <hr class="my-4">
                     
                     <div class="card">
                         <div class="card-header bg-light">
-                            <h5 class="mb-0">Безопасность</h5>
+                            <h5 class="mb-0">Security</h5>
                         </div>
                         <div class="card-body">
-                            <a href="{% url 'password_reset' %}" class="btn btn-outline-primary">Сменить пароль</a>
+                            <a href="{% url 'password_reset' %}" class="btn btn-outline-primary">Change password</a>
                         </div>
                     </div>
                 </div>

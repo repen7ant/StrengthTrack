@@ -11,9 +11,8 @@ class UserProfile(models.Model):
     birth_date = models.DateField(null=True, blank=True)
     profile_image = models.ImageField(upload_to="profile_images/", blank=True)
 
-    # Тренировочные данные
     training_experience = models.IntegerField(
-        default=0, help_text="Опыт тренировок (в месяцах)"
+        default=0, help_text="Experience (months)"
     )
     primary_goal = models.CharField(
         max_length=100,
@@ -38,4 +37,3 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.userprofile.save()
-
