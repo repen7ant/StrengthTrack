@@ -6,26 +6,94 @@ from django.dispatch import receiver
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    bio = models.TextField(max_length=500, blank=True)
-    location = models.CharField(max_length=100, blank=True)
-    birth_date = models.DateField(null=True, blank=True)
-    profile_image = models.ImageField(upload_to="profile_images/", blank=True)
-
-    training_experience = models.IntegerField(
-        default=0, help_text="Experience (months)"
-    )
-    primary_goal = models.CharField(
-        max_length=100,
-        blank=True,
-        choices=[
-            ("strength", "Сила"),
-            ("hypertrophy", "Мышечная масса"),
-            ("endurance", "Выносливость"),
-        ],
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_mesocycle_start = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.username} Profile"
+
+
+class Exercise(models.Model):
+    MUSCLE_GROUP_CHOICES = [
+        ("chest", "Грудь"),
+        ("back", "Спина"),
+        ("legs", "Ноги"),
+        ("shoulders", "Плечи"),
+        ("arms", "Руки"),
+        ("core", "Кор"),
+    ]
+
+    name = models.CharField(max_length=200)
+    is_main = models.BooleanField(
+        default=False, help_text="Основное упражнение (присед/жим/тяга)"
+    )
+    muscle_group = models.CharField(max_length=20, choices=MUSCLE_GROUP_CHOICES)
+    description = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-is_main", "name"]
+
+    def __str__(self):
+        return self.name
+
+
+class BestSet(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="best_sets")
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
+    weight = models.FloatField(help_text="Вес в кг")
+    reps = models.IntegerField(help_text="Количество повторений")
+    estimated_1rm = models.FloatField(help_text="Расчётный 1RM (Epley)")
+    updated_at = models.DateField(auto_now=True)
+    notes = models.TextField(blank=True, max_length=500)
+
+    class Meta:
+        unique_together = ("user", "exercise")
+        ordering = ["-updated_at"]
+
+    def calculate_1rm_epley(self):
+        """Epley formula: 1RM = weight * (1 + reps/30)"""
+        if self.reps == 0:
+            return self.weight
+        return round(self.weight * (1 + self.reps / 30), 2)
+
+    def calculate_1rm_brzycki(self):
+        """Brzycki formula: 1RM = weight / (1.0278 - 0.0278 * reps)"""
+        if self.reps == 0:
+            return self.weight
+        denominator = 1.0278 - 0.0278 * self.reps
+        if denominator <= 0:
+            return self.weight
+        return round(self.weight / denominator, 2)
+
+    def save(self, *args, **kwargs):
+        self.estimated_1rm = self.calculate_1rm_epley()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.exercise.name}: {self.weight}kg x {self.reps}"
+
+
+class Mesocycle(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="mesocycles")
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
+    start_date = models.DateField()
+    week = models.IntegerField(
+        choices=[(1, "Week 1"), (2, "Week 2"), (3, "Week 3"), (4, "Week 4")]
+    )
+    rpe = models.IntegerField(help_text="RPE (Rate of Perceived Exertion) 1-10")
+    rir = models.IntegerField(help_text="RIR (Reps In Reserve)")
+    target_weight = models.FloatField(help_text="Расчётный рабочий вес (кг)")
+    target_reps_min = models.IntegerField()
+    target_reps_max = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["start_date", "week"]
+        unique_together = ("user", "exercise", "start_date", "week")
+
+    def __str__(self):
+        return f"{self.user.username} - {self.exercise.name} - Week {self.week}"
 
 
 @receiver(post_save, sender=User)

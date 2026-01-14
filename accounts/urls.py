@@ -46,4 +46,10 @@ urlpatterns = [
         ),
         name="password_reset_complete",
     ),
+    path("add-best-set/", views.add_best_set, name="add_best_set"),
+    path(
+        "delete-best-set/<int:best_set_id>/",
+        views.delete_best_set,
+        name="delete_best_set",
+    ),
 ]
