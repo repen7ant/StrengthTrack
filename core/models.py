@@ -14,25 +14,13 @@ class UserProfile(models.Model):
 
 
 class Exercise(models.Model):
-    MUSCLE_GROUP_CHOICES = [
-        ("chest", "Грудь"),
-        ("back", "Спина"),
-        ("legs", "Ноги"),
-        ("shoulders", "Плечи"),
-        ("arms", "Руки"),
-        ("core", "Кор"),
-    ]
-
-    name = models.CharField(max_length=200)
-    is_main = models.BooleanField(
-        default=False, help_text="Основное упражнение (присед/жим/тяга)"
-    )
-    muscle_group = models.CharField(max_length=20, choices=MUSCLE_GROUP_CHOICES)
-    description = models.TextField(blank=True)
+    name = models.CharField(max_length=200, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ["-is_main", "name"]
+        ordering = ["name"]
+        verbose_name = "Упражнение"
+        verbose_name_plural = "Упражнения"
 
     def __str__(self):
         return self.name

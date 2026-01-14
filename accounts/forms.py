@@ -10,7 +10,7 @@ from core.models import BestSet, Exercise
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField(
         required=True,
-        help_text="Обязательное поле. Введите действующий адрес электронной почты.",
+        help_text="Required field. Enter a valid email address.",
     )
 
     class Meta:
@@ -21,14 +21,12 @@ class UserRegisterForm(UserCreationForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = "post"
-        self.helper.add_input(
-            Submit("submit", "Зарегистрироваться", css_class="btn-primary")
-        )
+        self.helper.add_input(Submit("submit", "Register", css_class="btn-primary"))
 
     def clean_email(self):
         email = self.cleaned_data.get("email")
         if User.objects.filter(email=email).exists():
-            raise forms.ValidationError("Пользователь с таким email уже существует")
+            raise forms.ValidationError("A user with this email already exists")
         return email
 
 
@@ -43,7 +41,7 @@ class UserUpdateForm(forms.ModelForm):
 class BestSetForm(forms.ModelForm):
     exercise = forms.ModelChoiceField(
         queryset=Exercise.objects.all(),
-        label="Упражнение",
+        label="Exercise",
         required=True,
     )
 
@@ -51,8 +49,8 @@ class BestSetForm(forms.ModelForm):
         model = BestSet
         fields = ["exercise", "weight", "reps"]
         labels = {
-            "weight": "Вес (кг)",
-            "reps": "Повторения",
+            "weight": "Weight (kg)",
+            "reps": "Repetitions",
         }
         widgets = {
             "weight": forms.NumberInput(
@@ -60,7 +58,7 @@ class BestSetForm(forms.ModelForm):
                     "step": "0.5",
                     "min": "0",
                     "class": "form-control",
-                    "placeholder": "Например: 100",
+                    "placeholder": "e.g. 100",
                 }
             ),
             "reps": forms.NumberInput(
@@ -68,7 +66,7 @@ class BestSetForm(forms.ModelForm):
                     "min": "1",
                     "max": "30",
                     "class": "form-control",
-                    "placeholder": "Например: 5",
+                    "placeholder": "e.g. 5",
                 }
             ),
             "exercise": forms.Select(
@@ -90,9 +88,7 @@ class BestSetForm(forms.ModelForm):
                 Column("weight", css_class="col-md-6"),
                 Column("reps", css_class="col-md-6"),
             ),
-            Submit(
-                "submit", "Сохранить подход", css_class="btn btn-primary btn-block mt-3"
-            ),
+            Submit("submit", "Save Set", css_class="btn btn-primary btn-block mt-3"),
         )
 
     def clean(self):
@@ -101,8 +97,8 @@ class BestSetForm(forms.ModelForm):
         reps = cleaned_data.get("reps")
 
         if weight is not None and weight <= 0:
-            raise forms.ValidationError("Вес должен быть больше 0")
+            raise forms.ValidationError("Weight must be greater than 0")
         if reps is not None and (reps < 1 or reps > 30):
-            raise forms.ValidationError("Повторения должны быть от 1 до 30")
+            raise forms.ValidationError("Repetitions must be between 1 and 30")
 
         return cleaned_data

@@ -10,18 +10,29 @@
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0">
-                        <i class="fas fa-dumbbell me-2" style="font-size: 1.2rem;"></i>Ввод лучшего подхода
+                        <i class="fas fa-dumbbell me-2" style="font-size: 1.2rem;"></i>Add Best Set
                     </h4>
                 </div>
                 <div class="card-body">
                     <p class="text-muted mb-4">
-                        Введите ваш лучший подход (вес и количество повторений). 
-                        Система автоматически рассчитает расчётный 1RM.
+                        Enter your best set (weight and repetitions). 
+                        System will automatically calculate estimated 1RM.
                     </p>
 
-                    <form method="post" novalidate>
+                    <form method="post">
                         {% csrf_token %}
                         
+                        {% if messages %}
+                            <div class="mb-4">
+                                {% for message in messages %}
+                                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
                         {% if form.non_field_errors %}
                             <div class="alert alert-danger">
                                 {% for error in form.non_field_errors %}
@@ -41,7 +52,7 @@
                                 </div>
                             {% endif %}
                             <small class="form-text text-muted d-block mt-1">
-                                Выберите упражнение из списка
+                                Select exercise from the list
                             </small>
                         </div>
 
@@ -58,7 +69,7 @@
                                         </div>
                                     {% endif %}
                                     <small class="form-text text-muted d-block mt-1">
-                                        Рабочий вес в килограммах
+                                        Working weight in kilograms
                                     </small>
                                 </div>
                             </div>
@@ -74,7 +85,7 @@
                                         </div>
                                     {% endif %}
                                     <small class="form-text text-muted d-block mt-1">
-                                        От 1 до 30 повторений
+                                        1 to 30 repetitions
                                     </small>
                                 </div>
                             </div>
@@ -82,10 +93,10 @@
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-between mt-4">
                             <a href="{% url 'profile' %}" class="btn btn-outline-secondary">
-                                <i class="fas fa-times me-2"></i>Отмена
+                                <i class="fas fa-times me-2"></i>Cancel
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>Сохранить подход
+                                <i class="fas fa-save me-2"></i>Save Set
                             </button>
                         </div>
                     </form>
@@ -94,11 +105,11 @@
                     
                     <div class="alert alert-info" role="alert">
                         <h6 class="alert-heading">
-                            <i class="fas fa-info-circle me-2"></i>Формула расчёта 1RM
+                            <i class="fas fa-info-circle me-2"></i>1RM Calculation Formula
                         </h6>
                         <p class="mb-0">
-                            Используется формула <strong>Epley</strong>:<br>
-                            <code>1RM = вес × (1 + повторения ÷ 30)</code>
+                            Uses <strong>Epley</strong> formula:<br>
+                            <code>1RM = weight × (1 + repetitions ÷ 30)</code>
                         </p>
                     </div>
                 </div>
