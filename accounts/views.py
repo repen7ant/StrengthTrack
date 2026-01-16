@@ -147,10 +147,10 @@ def mesocycle(request):
             Mesocycle.objects.filter(user=request.user, start_date=start_date).delete()
 
             weeks_config = [
-                {"week": 1, "rpe": 7, "rir": 3, "mult": 0.85, "reps": (8, 12)},
-                {"week": 2, "rpe": 8, "rir": 2, "mult": 0.90, "reps": (6, 10)},
-                {"week": 3, "rpe": 10, "rir": 0, "mult": 0.95, "reps": (4, 8)},
-                {"week": 4, "rpe": 5, "rir": 5, "mult": 0.70, "reps": (10, 15)},
+                {"week": 1, "rpe": 7, "rir": 3, "mult": 0.75, "reps": (8, 12)},
+                {"week": 2, "rpe": 8, "rir": 2, "mult": 0.80, "reps": (6, 10)},
+                {"week": 3, "rpe": 10, "rir": 0, "mult": 0.85, "reps": (4, 7)},
+                {"week": 4, "rpe": 5, "rir": 5, "mult": 0.60, "reps": (10, 15)},
             ]
 
             created_count = 0
@@ -162,6 +162,9 @@ def mesocycle(request):
                 cycles = []
 
                 for config in weeks_config:
+                    raw_weight = base_1rm * config["mult"]
+                    target_weight = round_to_plates(raw_weight)
+
                     cycle = Mesocycle.objects.create(
                         user=request.user,
                         exercise=exercise,
@@ -169,7 +172,7 @@ def mesocycle(request):
                         week=config["week"],
                         rpe=config["rpe"],
                         rir=config["rir"],
-                        target_weight=round(base_1rm * config["mult"], 1),
+                        target_weight=target_weight,
                         target_reps_min=config["reps"][0],
                         target_reps_max=config["reps"][1],
                     )
@@ -231,3 +234,12 @@ def mesocycle(request):
     }
 
     return render(request, "accounts/mesocycle.html", context)
+
+
+def round_to_plates(weight: float, plate_size: float = 1.25) -> float:
+    """
+    Round weight to the nearest achievable value using plates.
+    Default: 1.25 kg plates (2.5 kg total step).
+    """
+    step = plate_size * 2
+    return round(weight / step) * step
