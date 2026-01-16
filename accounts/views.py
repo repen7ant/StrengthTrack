@@ -59,7 +59,7 @@ def add_best_set(request):
             new_reps = form.cleaned_data["reps"]
             new_exercise = form.cleaned_data["exercise"]
 
-            new_1rm = round(new_weight * (1 + new_reps / 30), 2)
+            new_1rm = round(new_weight / (1.0278 - 0.0278 * new_reps), 2)
 
             existing_set = BestSet.objects.filter(
                 user=request.user, exercise=new_exercise
@@ -67,7 +67,6 @@ def add_best_set(request):
 
             if existing_set:
                 existing_1rm = existing_set.estimated_1rm
-
                 if new_1rm < existing_1rm:
                     messages.warning(
                         request,
@@ -79,6 +78,7 @@ def add_best_set(request):
 
             best_set = form.save(commit=False)
             best_set.user = request.user
+            best_set.estimated_1rm = new_1rm
 
             if existing_set:
                 best_set.pk = existing_set.pk
@@ -149,7 +149,7 @@ def mesocycle(request):
             weeks_config = [
                 {"week": 1, "rpe": 7, "rir": 3, "mult": 0.75, "reps": (8, 12)},
                 {"week": 2, "rpe": 8, "rir": 2, "mult": 0.80, "reps": (6, 10)},
-                {"week": 3, "rpe": 10, "rir": 0, "mult": 0.85, "reps": (4, 7)},
+                {"week": 3, "rpe": 10, "rir": 0, "mult": 0.9, "reps": (4, 7)},
                 {"week": 4, "rpe": 5, "rir": 5, "mult": 0.60, "reps": (10, 15)},
             ]
 

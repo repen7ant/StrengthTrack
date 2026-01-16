@@ -29,9 +29,9 @@ class Exercise(models.Model):
 class BestSet(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="best_sets")
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
-    weight = models.FloatField(help_text="Вес в кг")
-    reps = models.IntegerField(help_text="Количество повторений")
-    estimated_1rm = models.FloatField(help_text="Расчётный 1RM (Epley)")
+    weight = models.FloatField(help_text="Weight in kg")
+    reps = models.IntegerField(help_text="Repetitions")
+    estimated_1rm = models.FloatField(help_text="Calculated 1RM (Brzycki)")
     updated_at = models.DateField(auto_now=True)
     notes = models.TextField(blank=True, max_length=500)
 
@@ -55,11 +55,11 @@ class BestSet(models.Model):
         return round(self.weight / denominator, 2)
 
     def save(self, *args, **kwargs):
-        self.estimated_1rm = self.calculate_1rm_epley()
+        self.estimated_1rm = self.calculate_1rm_brzycki()
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.user.username} - {self.exercise.name}: {self.weight}kg x {self.reps}"
+        return f"{self.user.username} - {self.exercise.name}: {self.weight}kg x {self.reps} (1RM: {self.estimated_1rm}kg)"
 
 
 @receiver(post_save, sender=User)
