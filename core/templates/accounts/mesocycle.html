@@ -1,0 +1,145 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Mesocycle - StrengthTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .mesocycle-card { transition: transform 0.2s; }
+    .mesocycle-card:hover { transform: translateY(-2px); }
+    .status-ready { border-left: 4px solid #28a745 !important; }
+    .status-missing { border-left: 4px solid #ffc107 !important; }
+    .status-cycle { border-left: 4px solid #007bff !important; }
+    .date-range { background: linear-gradient(90deg, #e3f2fd, #f3e5f5); }
+    .bg-gradient-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+        <h2><i class="fas fa-calendar-alt me-2 text-primary"></i>Mesocycle</h2>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="mb-4">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Missing Best Sets Alert -->
+    {% if missing_best_sets %}
+    <div class="alert alert-warning">
+        <h6><i class="fas fa-exclamation-triangle me-2"></i>Missing Best Sets</h6>
+        <p>Add best sets for: <strong>{{ missing_best_sets|join:", " }}</strong></p>
+        <a href="{% url 'profile' %}" class="btn btn-outline-warning">Add Best Sets</a>
+    </div>
+    {% endif %}
+
+    <!-- Generate Form -->
+    <div class="card shadow-sm mb-5">
+        <div class="card-body py-5">
+            <div class="text-center mb-4">
+                <h4 class="fw-bold mb-1">Generate New Mesocycle</h4>
+                <p class="text-muted mb-0">
+                    Create a new 4-week training cycle for your main lifts
+                </p>
+            </div>
+
+            <form method="post" class="d-flex justify-content-center">
+                {% csrf_token %}
+
+                <div class="row g-3 align-items-end" style="max-width: 520px; width: 100%;">
+                    <div class="col-12 col-md-7">
+                        <label class="form-label fw-semibold">Start Date</label>
+                        <input
+                            type="date"
+                            class="form-control form-control-lg"
+                            name="start_date"
+                            value="{% if start_date %}{{ start_date|date:'Y-m-d' }}{% else %}{{ today|date:'Y-m-d' }}{% endif %}"
+                            required
+                        >
+                    </div>
+
+                    <div class="col-12 col-md-5">
+                        <button
+                            type="submit"
+                            class="btn btn-primary btn-lg w-100"
+                            {% if missing_best_sets %}disabled{% endif %}
+                        >
+                            <i class="fas fa-magic me-2"></i>
+                            Generate
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            {% if missing_best_sets %}
+            <div class="alert alert-warning mt-4 text-center mb-0">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Add best sets for all main exercises before generating a mesocycle.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+
+    <!-- Current Mesocycle Header -->
+    {% if mesocycle_exists %}
+    <div class="card mb-4 date-range">
+        <div class="card-body text-center">
+            <h5 class="mb-1">Current Mesocycle</h5>
+            <p class="lead mb-0">
+                {{ start_date|date:"F d, Y" }} - {{ mesocycle_end_date|date:"F d, Y" }}
+            </p>
+        </div>
+    </div>
+
+    <div class="alert alert-info mb-4">
+        <h6><i class="fas fa-info-circle me-2"></i>Weekly Volume</h6>
+        <p class="mb-0">Aim for <strong>10-20 sets per muscle group per week</strong>.</p>
+    </div>
+    {% endif %}
+
+    <!-- Mesocycle Display -->
+    {% if mesocycle_exists %}
+    {% for exercise_name, cycles in mesocycles_by_exercise.items %}
+    <div class="card shadow-lg mb-5 mesocycle-card">
+        <div class="card-header bg-gradient-primary text-white py-3">
+            <h4 class="mb-0"><i class="fas fa-dumbbell me-2"></i>{{ exercise_name }}</h4>
+        </div>
+        <div class="card-body p-0">
+            <div class="row g-3 p-4">
+                {% for cycle in cycles %}
+                <div class="col-lg-3 col-md-6">
+                    <div class="card h-100 border-0 shadow-sm mesocycle-card">
+                        <div class="card-body text-center py-4">
+                            <div class="bg-light mb-3 p-2 rounded">
+                                <small class="text-muted">
+                                    {{ cycle.week_start|date:"M d" }} –
+                                    {{ cycle.week_end|date:"M d" }}
+                                </small>
+                            </div>
+                            <h6 class="fw-bold mb-3 text-primary">Week {{ cycle.week }}</h6>
+                            <div class="mb-4">
+                                <span class="badge bg-secondary fs-6 me-1 px-2 py-2">{{ cycle.rpe }} RPE</span>
+                                <span class="badge bg-info fs-6 px-2 py-2">{{ cycle.rir }} RIR</span>
+                            </div>
+                            <div class="h3 fw-bold mb-3 text-success">{{ cycle.target_weight }} kg</div>
+                            <div class="bg-light p-2 rounded fs-6">
+                                {{ cycle.target_reps_min }}-{{ cycle.target_reps_max }} reps
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}

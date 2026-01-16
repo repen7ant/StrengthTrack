@@ -52,4 +52,5 @@ urlpatterns = [
         views.delete_best_set,
         name="delete_best_set",
     ),
+    path("mesocycle/", views.mesocycle, name="mesocycle"),
 ]

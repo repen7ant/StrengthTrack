@@ -62,16 +62,29 @@ class BestSet(models.Model):
         return f"{self.user.username} - {self.exercise.name}: {self.weight}kg x {self.reps}"
 
 
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.userprofile.save()
+
+
 class Mesocycle(models.Model):
+    MAIN_EXERCISES = ["Barbell Back Squat", "Barbell Bench Press", "Deadlift"]
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="mesocycles")
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
     start_date = models.DateField()
     week = models.IntegerField(
         choices=[(1, "Week 1"), (2, "Week 2"), (3, "Week 3"), (4, "Week 4")]
     )
-    rpe = models.IntegerField(help_text="RPE (Rate of Perceived Exertion) 1-10")
-    rir = models.IntegerField(help_text="RIR (Reps In Reserve)")
-    target_weight = models.FloatField(help_text="Расчётный рабочий вес (кг)")
+    rpe = models.IntegerField()
+    rir = models.IntegerField()
+    target_weight = models.FloatField()
     target_reps_min = models.IntegerField()
     target_reps_max = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -82,14 +95,3 @@ class Mesocycle(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.exercise.name} - Week {self.week}"
-
-
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.create(user=instance)
-
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.userprofile.save()
