@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
-from core.models import BestSet, Exercise, Mesocycle
+from core.models import BestSet, BestSetHistory, Exercise, Mesocycle
 
 from .forms import BestSetForm, UserRegisterForm
 
@@ -76,6 +76,14 @@ def add_best_set(request):
                     )
                     return render(request, "accounts/add_best_set.html", {"form": form})
 
+                BestSetHistory.objects.create(
+                    user=request.user,
+                    exercise=existing_set.exercise,
+                    weight=existing_set.weight,
+                    reps=existing_set.reps,
+                    estimated_1rm=existing_set.estimated_1rm,
+                )
+
             best_set = form.save(commit=False)
             best_set.user = request.user
             best_set.estimated_1rm = new_1rm
@@ -104,9 +112,13 @@ def add_best_set(request):
 def delete_best_set(request, best_set_id):
     """Delete best set"""
     best_set = BestSet.objects.get(id=best_set_id, user=request.user)
-    exercise_name = best_set.exercise.name
+    exercise = best_set.exercise
+
+    BestSetHistory.objects.filter(user=request.user, exercise=exercise).delete()
+
     best_set.delete()
-    messages.success(request, f"Set for {exercise_name} deleted")
+
+    messages.success(request, f"Set and history for {exercise.name} deleted")
     return redirect("profile")
 
 

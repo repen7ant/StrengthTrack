@@ -95,3 +95,27 @@ class Mesocycle(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.exercise.name} - Week {self.week}"
+
+
+class BestSetHistory(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="best_set_history"
+    )
+    exercise = models.ForeignKey(
+        Exercise, on_delete=models.CASCADE, related_name="best_set_history"
+    )
+
+    weight = models.FloatField(help_text="Weight in kg")
+    reps = models.IntegerField(help_text="Repetitions")
+    estimated_1rm = models.FloatField(help_text="Calculated 1RM (Brzycki)")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return (
+            f"{self.user.username} - {self.exercise.name}: "
+            f"{self.weight}kg x {self.reps} ({self.estimated_1rm}kg)"
+        )
