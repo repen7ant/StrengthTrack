@@ -33,10 +33,6 @@ class BestSet(models.Model):
     estimated_1rm = models.FloatField(help_text="Calculated 1RM (Brzycki)")
     updated_at = models.DateField(auto_now=True)
 
-    class Meta:
-        unique_together = ("user", "exercise")
-        ordering = ["-updated_at"]
-
     def calculate_1rm_brzycki(self):
         """Brzycki formula: 1RM = weight / (1.0278 - 0.0278 * reps)"""
         if self.reps == 0:
@@ -80,10 +76,6 @@ class Mesocycle(models.Model):
     target_reps_min = models.IntegerField()
     target_reps_max = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ["start_date", "week"]
-        unique_together = ("user", "exercise", "start_date", "week")
 
     def __str__(self):
         return f"{self.user.username} - {self.exercise.name} - Week {self.week}"
