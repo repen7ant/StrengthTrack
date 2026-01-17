@@ -7,7 +7,6 @@ from django.dispatch import receiver
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    last_mesocycle_start = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.username} Profile"
@@ -33,17 +32,10 @@ class BestSet(models.Model):
     reps = models.IntegerField(help_text="Repetitions")
     estimated_1rm = models.FloatField(help_text="Calculated 1RM (Brzycki)")
     updated_at = models.DateField(auto_now=True)
-    notes = models.TextField(blank=True, max_length=500)
 
     class Meta:
         unique_together = ("user", "exercise")
         ordering = ["-updated_at"]
-
-    def calculate_1rm_epley(self):
-        """Epley formula: 1RM = weight * (1 + reps/30)"""
-        if self.reps == 0:
-            return self.weight
-        return round(self.weight * (1 + self.reps / 30), 2)
 
     def calculate_1rm_brzycki(self):
         """Brzycki formula: 1RM = weight / (1.0278 - 0.0278 * reps)"""
