@@ -53,4 +53,5 @@ urlpatterns = [
         name="delete_best_set",
     ),
     path("mesocycle/", views.mesocycle, name="mesocycle"),
+    path("progress/", views.progress_1rm, name="progress_1rm"),
 ]

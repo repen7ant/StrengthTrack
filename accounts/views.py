@@ -255,3 +255,49 @@ def round_to_plates(weight: float, plate_size: float = 1.25) -> float:
     """
     step = plate_size * 2
     return round(weight / step) * step
+
+
+@login_required
+def progress_1rm(request):
+    """Progress charts for 1RM by exercise"""
+    exercises = Exercise.objects.filter(best_set_history__user=request.user).distinct()
+
+    charts_data = []
+    for exercise in exercises:
+        history = BestSetHistory.objects.filter(
+            user=request.user,
+            exercise=exercise,
+        ).order_by("created_at")
+
+        data_points = [
+            {"date": h.created_at.strftime("%Y-%m-%d"), "value": float(h.estimated_1rm)}
+            for h in history
+        ]
+
+        best_set = BestSet.objects.filter(
+            user=request.user,
+            exercise=exercise,
+        ).first()
+
+        if best_set:
+            data_points.append(
+                {
+                    "date": best_set.updated_at.strftime("%Y-%m-%d"),
+                    "value": float(best_set.estimated_1rm),
+                }
+            )
+
+        data_points.sort(key=lambda x: x["date"])
+
+        charts_data.append(
+            {
+                "exercise": exercise.name,
+                "dates": [dp["date"] for dp in data_points],
+                "values": [dp["value"] for dp in data_points],
+            }
+        )
+
+    context = {
+        "charts_data": charts_data,
+    }
+    return render(request, "accounts/progress_1rm.html", context)

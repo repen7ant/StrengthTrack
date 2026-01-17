@@ -1,0 +1,112 @@
+{% extends "core/base.html" %}
+
+{% block title %}1RM Progress - StrengthTrack{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+            <i class="fas fa-chart-line me-2 text-primary"></i>1RM Progress
+        </h2>
+        <a href="{% url 'profile' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> To Profile
+        </a>
+    </div>
+
+    {% if charts_data %}
+        {% for chart in charts_data %}
+        <div class="card shadow mb-5">
+            <div class="card-header bg-light border-bottom">
+                <h5 class="card-title mb-0">{{ chart.exercise }}</h5>
+                <small class="text-muted">
+                    {{ chart.dates|length }} updates • Max: {{ chart.values|slice:":1"|last }}kg
+                </small>
+            </div>
+            <div class="card-body p-0">
+                <div style="position: relative; height: 400px;">
+                    <canvas id="chart-{{ forloop.counter0 }}"></canvas>
+                </div>
+                
+                <script id="chart-data-{{ forloop.counter0 }}" type="application/json">
+                    {{ chart.dates|safe }}
+                    {{ chart.values|safe }}
+                </script>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-chart-line fa-5x text-muted mb-4 opacity-50"></i>
+            <h4 class="text-muted mb-3">No Progress Data Yet</h4>
+            <p class="text-muted mb-4 lead">Add best sets to see your 1RM progress over time.</p>
+            <a href="{% url 'add_best_set' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus me-2"></i>Add Best Set
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    {% for chart in charts_data %}
+        (function() {
+            const dataElement = document.getElementById('chart-data-{{ forloop.counter0 }}');
+            const dates = {{ chart.dates|safe }};
+            const values = {{ chart.values|safe }};
+            
+            const ctx = document.getElementById('chart-{{ forloop.counter0 }}').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'Estimated 1RM (kg)',
+                        data: values,
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: 'rgb(75, 192, 192)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: true, position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y.toFixed(1)}kg`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Date' } },
+                        y: {
+                            beginAtZero: false,
+                            title: { display: true, text: '1RM (kg)' },
+                            ticks: { callback: function(value) { return value + 'kg'; } }
+                        }
+                    }
+                }
+            });
+        })();
+    {% endfor %}
+});
+</script>
+
+<style>
+.card { transition: transform 0.2s ease-in-out; }
+.card:hover { transform: translateY(-2px); }
+</style>
+{% endblock %}
