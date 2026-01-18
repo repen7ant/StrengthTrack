@@ -66,19 +66,19 @@ Visit http://127.0.0.1:8000/ to access the app in your browser.
 
 ## Screenshots
 
-![Main Page](docs/screenshots/home.png)
+![Main Page](screenshots/home.png)
 *Home page after launching the server*
 
-![Profile Page](docs/screenshots/profile.png)
+![Profile Page](screenshots/profile.png)
 *User profile with best sets*
 
-![Add Best Set](docs/screenshots/add_set.png)
+![Add Best Set](screenshots/add_set.png)
 *Form for adding or editing personal best sets*
 
-![Mesocycle Generation](docs/screenshots/mesocycle.png)
+![Mesocycle Generation](screenshots/mesocycle.png)
 *Generated 4-week mesocycle based on best sets*
 
-![Progress Chart](docs/screenshots/progress.png)
+![Progress Chart](screenshots/progress.png)
 *1RM progress over time, with per-exercise charts*
 
 ---
